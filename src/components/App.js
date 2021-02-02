@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {connect} from 'react-redux'
+import {} from '../data'
 
-function App() {
+function App(props) {
+  console.log(props)
+ 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>REDUX ARTICLE LIST SEARCH APP</h1>
+      <Search onSearch={props.onSearch}/>
+      <Articles  {...props}/> 
+      
     </div>
   );
 }
 
-export default App;
+const Search = (props)=>(
+<input type="text" onChange={(e)=>{props.onSearch(e.target.value)}}/>
+)
+  
+
+const Articles = (props) => (
+  <ul>
+    {props.articles.filter(
+      article => article.title.toLowerCase().includes(props.searchTerm.toLowerCase()))
+      .map((article) => (
+      <li key={article.id}>
+        <a href={article.url}>{article.title}</a>
+      </li>
+    ))}
+  </ul>
+);
+
+const mapStateToProps = state => ({
+  articles: state.articlesState.articles,
+  searchTerm: state.searchState.searchTerm
+});
+const mapDispatchToProps = dispatch => ({
+  onSearch: searchTerm => dispatch({ type: 'SEARCH_SET', searchTerm }),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(App);
+
+
+// export default App;
